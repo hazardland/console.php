@@ -22,22 +22,150 @@
     	return $color.$text."\033[0;39m";
     }
 
-    // echo color ('BLACK ', BLACK);
-    // echo color ('GRAY ', GRAY);
-    // echo color ('MAROON ', MAROON);
-    // echo color ('RED ', RED);
-    // echo color ('GREEN ', GREEN);
-    // echo color ('LIME ', LIME);
-    // echo color ('YELLOW ', YELLOW);
-    // echo color ('BROWN ', BROWN);
-    // echo color ('NAVY ', NAVY);
-    // echo color ('BLUE ', BLUE);
-    // echo color ('PURPLE ', PURPLE);
-    // echo color ('PINK ', PINK);
-    // echo color ('CYAN ', CYAN);
-    // echo color ('AQUA ', AQUA);
-    // echo color ('SILVER ', SILVER);
-    // echo color ('WHITE', WHITE);
-    // echo "\n";
+    function clean ($string)
+    {
+        return str_replace (
+            ["\033[0;39m",BLACK,GRAY,MAROON,RED,GREEN,LIME,YELLOW,BROWN,NAVY,BLUE,PURPLE,PINK,CYAN,AQUA,SILVER,WHITE],
+            '',
+            $string);
+    }
+
+
+/*    echo color ('BLACK ', BLACK);
+    echo color ('GRAY ', GRAY);
+    echo color ('MAROON ', MAROON);
+    echo color ('RED ', RED);
+    echo color ('GREEN ', GREEN);
+    echo color ('LIME ', LIME);
+    echo color ('YELLOW ', YELLOW);
+    echo color ('BROWN ', BROWN);
+    echo color ('NAVY ', NAVY);
+    echo color ('BLUE ', BLUE);
+    echo color ('PURPLE ', PURPLE);
+    echo color ('PINK ', PINK);
+    echo color ('CYAN ', CYAN);
+    echo color ('AQUA ', AQUA);
+    echo color ('SILVER ', SILVER);
+    echo color ('WHITE', WHITE);
+    echo "\n";*/
+
+    function table ($data, $color=GRAY)
+    {
+        // Find longest string in each column
+        $lengths = [];
+        foreach ($data as $item)
+        {
+            foreach ($item as $field => $value)
+            {
+                $length = strlen(clean($value));
+                if (empty($lengths[$field]) || $lengths[$field] < $length)
+                {
+                    $lengths[$field] = $length;
+                }
+            }
+        }
+
+        // Output table, padding columns
+
+        $width = count($item);
+        $height = count($data);
+
+        $table = '';
+        $cell = 0;
+        foreach ($item as $field => $value)
+        {
+            $cell++;
+            if ($cell==1)
+            {
+                $table .= color('┌',$color).str_repeat(color('─',$color),$lengths[$field]).color('┬',$color);
+            }
+            else if ($cell==$width)
+            {
+                $table .= str_repeat(color('─',$color),$lengths[$field]).color('┐',$color);
+            }
+            else
+            {
+                $table .= str_repeat(color('─',$color),$lengths[$field]).color('┬',$color);
+            }
+
+        }
+        $table .= PHP_EOL;
+
+        $row = 0;
+        foreach ($data as $item)
+        {
+            $row++;
+            $cell = 0;
+            foreach ($item as $field => $value)
+            {
+                $cell++;
+                if ($cell==1)
+                {
+                    $space = '';
+                    $length = $lengths[$field]-strlen(clean($value));
+                    if ($length>0)
+                    {
+                        $space = str_repeat(' ',$length);
+                    }
+                    $table .= color('│',$color).$space.$value.color('│',$color);
+
+                }
+                else if ($cell==$width)
+                {
+                    $table .= str_repeat(' ',$lengths[$field]-strlen(clean($value))).$value.color('│',$color);
+                }
+                else
+                {
+
+                    $table .= str_repeat(' ',$lengths[$field]-strlen(clean($value))).$value.color('│',$color);
+                }
+
+            }
+            $table .= PHP_EOL;
+            $cell = 0;
+            foreach ($item as $field => $value)
+            {
+                $cell++;
+                if ($row==$height)
+                {
+
+                    if ($cell==1)
+                    {
+                        $table .= color('└',$color).str_repeat(color('─',$color),$lengths[$field]).color('┴',$color);
+                    }
+                    else if ($cell==$width)
+                    {
+                        $table .= str_repeat(color('─',$color),$lengths[$field]).color('┘',$color);
+                    }
+                    else
+                    {
+                        $table .= str_repeat(color('─',$color),$lengths[$field]).color('┴',$color);
+                    }
+
+                }
+                else
+                {
+
+                    if ($cell==1)
+                    {
+                        $table .= color('├',$color).str_repeat(color('─',$color),$lengths[$field]).color('┼',$color);
+                    }
+                    else if ($cell==$width)
+                    {
+                        $table .= str_repeat(color('─',$color),$lengths[$field]).color('┤',$color);
+                    }
+                    else
+                    {
+                        $table .= str_repeat(color('─',$color),$lengths[$field]).color('┼',$color);
+                    }
+                }
+            }
+            $table .= PHP_EOL;
+
+        }
+        //debug ($lengths);
+        return $table;
+    }
+
 
 ?>
