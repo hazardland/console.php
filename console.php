@@ -49,6 +49,9 @@
     echo color ('WHITE', WHITE);
     echo "\n";*/
 
+    /*
+    	should we keep it ?
+    */
     function table ($data, $color=GRAY)
     {
         // Find longest string in each column
