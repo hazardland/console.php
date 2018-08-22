@@ -1,5 +1,7 @@
 <?php
 
+    namespace console;
+
     const BLACK = "\33[0;30m";
     const GRAY = "\33[1;30m";
     const MAROON = "\33[0;31m";
@@ -170,19 +172,15 @@
         return $table;
     }
 
-    function termux_notification ($title, $content, $led)
+    function progress ($start, $middle, $end)
     {
-        if (PHP_OS!='WINNT' && `which termux-notification`)
-        {
-            try
-            {
-                shell_exec ('termux-notification --title="'.$title.'" --content="'.$content.'" --led="'.$led.'"');
-            }
-            catch (\Exception $e)
-            {
-                
-            }
-        }
+        $string = " ".$start." ".$middle." ".$end." ";
+        $progress = 100-intval(100/($end-$start)*($end-$middle));
+        $position = intval($progress/(100/strlen($string))-1);
+        if ($position>strlen($string)) $position = strlen($string)-1;
+        if ($position<0) $position = 0;
+        echo "   \33[0;30m\33[41m".substr($string,0,$position)."\33[43m".$string[$position].substr($string,$position+1)."\033[0;39m\n";//.chr(27)."[0G";
     }
+
 
 ?>
