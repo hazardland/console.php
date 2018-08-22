@@ -172,14 +172,25 @@
         return $table;
     }
 
-    function progress ($start, $middle, $end)
+    function progress ($string, $start, $middle, $end)
     {
-        $string = " ".$start." ".$middle." ".$end." ";
+        //$string = " ".$start." ".$middle." ".$end." ";
         $progress = 100-intval(100/($end-$start)*($end-$middle));
-        $position = intval($progress/(100/strlen($string))-1);
-        if ($position>strlen($string)) $position = strlen($string)-1;
+        $position = intval($progress/(100/strlen($string)));
+        //$position  = $position -;
+        if ($position>=strlen($string)) $position = strlen($string)-1;
         if ($position<0) $position = 0;
-        echo "   \33[0;30m\33[41m".substr($string,0,$position)."\33[43m".$string[$position].substr($string,$position+1)."\033[0;39m\n";//.chr(27)."[0G";
+        return
+        "\33[0;30m\33[41m".
+        substr($string,0,$position).
+        (($progress<100)?"\33[43m":'').
+        //"\33[43m".
+        $string[$position].
+        substr($string,$position+1).
+        "\033[0;39m"
+        //" ".$progress." ".$position." ".strlen($string)
+        //.chr(27)."[0G"
+        ;
     }
 
 
